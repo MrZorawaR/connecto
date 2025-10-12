@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Baithak",
+  title: "Connecto",
   description: "Video Calling App",
   icons: {
     icon: "/icons/logo.svg",
