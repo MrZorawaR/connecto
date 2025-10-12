@@ -41,6 +41,10 @@ export default function RootLayout({
     <html lang="en">
       <ClerkProvider
         publishableKey={pk!}
+        signInUrl="/sign-in"
+        signUpUrl="/sign-up"
+        afterSignInUrl="/"
+        afterSignUpUrl="/"
         appearance={{
           layout: {
             logoImageUrl: "/icons/yoom-logo.svg",
