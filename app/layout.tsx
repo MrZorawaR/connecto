@@ -43,8 +43,6 @@ export default function RootLayout({
         publishableKey={pk!}
         signInUrl="/sign-in"
         signUpUrl="/sign-up"
-        afterSignInUrl="/"
-        afterSignUpUrl="/"
         appearance={{
           layout: {
             logoImageUrl: "/icons/yoom-logo.svg",
