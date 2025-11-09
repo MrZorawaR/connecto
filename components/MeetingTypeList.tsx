@@ -7,10 +7,10 @@ import MeetingModal from "./MeetingModal";
 import { useUser } from "@clerk/nextjs";
 import { Call, useStreamVideoClient } from "@stream-io/video-react-sdk";
 import { useToast } from "@/hooks/use-toast";
-import { title } from "process";
 import { Textarea } from "./ui/textarea";
 import ReactDatePicker from "react-datepicker";
 import { Input } from "./ui/input";
+import { Calendar, LogIn, PlaySquare, Plus, PlusCircle } from "lucide-react";
 
 const MeetingTypeList = () => {
   const router = useRouter();
@@ -33,9 +33,7 @@ const MeetingTypeList = () => {
 
     try {
       if (!values.dateTime) {
-        toast({
-          title: "Please select a date and time",
-        });
+        toast({ title: "Please select a date and time" });
         return;
       }
 
@@ -50,9 +48,7 @@ const MeetingTypeList = () => {
       await call.getOrCreate({
         data: {
           starts_at: startsAt,
-          custom: {
-            description,
-          },
+          custom: { description },
         },
       });
 
@@ -61,48 +57,47 @@ const MeetingTypeList = () => {
       if (!values.description) {
         router.push(`/meeting/${call.id}`);
       }
-      toast({
-        title: "Meeting Created",
-      });
+      toast({ title: "Meeting Created" });
     } catch (error) {
       console.log(error);
-      toast({
-        title: "Failed to create meeting",
-      });
+      toast({ title: "Failed to create meeting" });
     }
   };
 
   const meetingLink = `${process.env.NEXT_PUBLIC_BASE_URL}/meeting/${callDetails?.id}`;
 
   return (
-    <section className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
+    <section className="grid grid-cols-1 gap-5 text-[var(--clr-text)] md:grid-cols-2 xl:grid-cols-4">
       <HomeCard
-        img="/icons/add-meeting.svg"
+        icon={PlusCircle}
         title="New Meeting"
         description="Start an instant meeting"
         handleClick={() => setMeetingState("isInstantMeeting")}
-        className="bg-orange-1"
+        className="card hover:shadow-[var(--elev-2)]"
       />
+
       <HomeCard
-        img="/icons/schedule.svg"
+        icon={Calendar}
         title="Schedule Meeting"
         description="Plan your meeting"
         handleClick={() => setMeetingState("isScheduleMeeting")}
-        className="bg-purple-1"
+        className="card hover:shadow-[var(--elev-2)]"
       />
+
       <HomeCard
-        img="/icons/join-meeting.svg"
+        icon={LogIn}
         title="Join Meeting"
         description="Join via invitation link"
         handleClick={() => setMeetingState("isJoiningMeeting")}
-        className="bg-blue-1"
+        className="card hover:shadow-[var(--elev-2)]"
       />
+
       <HomeCard
-        img="/icons/recordings.svg"
+        icon={PlaySquare}
         title="View Recordings"
-        description="Check your Reordings"
+        description="Check your Recordings"
         handleClick={() => router.push("/recordings")}
-        className="bg-yellow-1"
+        className="card hover:shadow-[var(--elev-2)]"
       />
 
       {!callDetails ? (
@@ -113,18 +108,18 @@ const MeetingTypeList = () => {
           handleClick={createMeeting}
         >
           <div className="flex flex-col gap-2.5">
-            <label className="text-base text-normal leading-[22px] text-sky-2">
+            <label className="text-base leading-[22px] text-[var(--clr-muted)]">
               Add a description
             </label>
             <Textarea
-              className="border-none bg-dark-3 focus-visible:ring-0 focus-visible:ring-offset-0"
+              className="border border-[var(--clr-border)] bg-[var(--clr-surface)] text-[var(--clr-text)] focus-visible:ring-0 focus-visible:ring-offset-0"
               onChange={(e) => {
                 setValues({ ...values, description: e.target.value });
               }}
             />
           </div>
           <div className="flex w-full flex-col gap-2.5">
-            <label className="text-base text-normal leading-[22px] text-sky-2">
+            <label className="text-base leading-[22px] text-[var(--clr-muted)]">
               Select Date and Time
             </label>
             <ReactDatePicker
@@ -135,7 +130,7 @@ const MeetingTypeList = () => {
               timeIntervals={15}
               timeCaption="time"
               dateFormat="MMMM d, yyyy h:mm aa"
-              className="w-full rounded bg-dark-3 p-2 focus:outline-none"
+              className="w-full rounded-[var(--radius-sm)] border border-[var(--clr-border)] bg-[var(--clr-surface)] p-2 text-[var(--clr-text)] focus:outline-none"
             />
           </div>
         </MeetingModal>
@@ -154,6 +149,7 @@ const MeetingTypeList = () => {
           buttonText="Copy Meeting Link"
         />
       )}
+
       <MeetingModal
         isOpen={meetingState === "isInstantMeeting"}
         onClose={() => setMeetingState(undefined)}
@@ -162,6 +158,7 @@ const MeetingTypeList = () => {
         buttonText="Start Meeting"
         handleClick={createMeeting}
       />
+
       <MeetingModal
         isOpen={meetingState === "isJoiningMeeting"}
         onClose={() => setMeetingState(undefined)}
@@ -172,7 +169,7 @@ const MeetingTypeList = () => {
       >
         <Input
           placeholder="Meeting Link"
-          className="border-none bg-dark-3 focus-visible:ring-0 focus-visible:ring-offset-0"
+          className="border border-[var(--clr-border)] bg-[var(--clr-surface)] text-[var(--clr-text)] focus-visible:ring-0 focus-visible:ring-offset-0"
           onChange={(e) => setValues({ ...values, link: e.target.value })}
         />
       </MeetingModal>

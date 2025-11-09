@@ -2,129 +2,185 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
+/* ================================
+   Premium Light Theme — Design Tokens
+=================================== */
+:root {
+  /* Surfaces */
+  --clr-bg: #ffffff;
+  --clr-surface: #ffffff;
+  --clr-subtle: #f6f7fb;
+  --clr-border: #e7e9f1;
+
+  /* Text */
+  --clr-text: #0f172a;    /* slate-900 */
+  --clr-muted: #475569;   /* slate-600 */
+
+  /* Brand */
+  --clr-primary: #4f46e5;         /* indigo-600 */
+  --clr-primary-700: #4338ca;     /* hover */
+  --clr-primary-outline: rgba(79,70,229,.25);
+
+  /* Radius & Elevation */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+
+  --elev-1: 0 1px 2px rgba(15, 23, 42, .05);
+  --elev-2: 0 12px 24px rgba(15, 23, 42, .08);
+  --elev-3: 0 18px 36px rgba(15, 23, 42, .12);
+}
+
+/* Reset + base */
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+html { color-scheme: light; }
+body {
   margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+  background: linear-gradient(180deg, #fafbff 0%, #ffffff 120%);
+  color: var(--clr-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-::-webkit-scrollbar {
-  width: 10px;
-  background-color: #1C1F2E;
-  border-radius: 5px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  -ms-border-radius: 5px;
-  -o-border-radius: 5px;
-  overflow: hidden;
+/* Focus + links */
+:focus-visible { outline: 2px solid var(--clr-primary); outline-offset: 2px; }
+a { color: var(--clr-primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Light scrollbar */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, var(--clr-primary) 30%, var(--clr-border));
+  border-radius: 999px;
+  border: 2px solid #fff;
+}
+::-webkit-scrollbar-track { background: #fff; }
+
+/* Layout helpers */
+.container { width: min(1100px, 92vw); margin-inline: auto; padding: 56px 0; }
+.muted { color: var(--clr-muted); }
+
+/* Stacks & rows */
+.stack-sm > * + * { margin-top: 12px; }
+.stack-md > * + * { margin-top: 16px; }
+.stack-lg > * + * { margin-top: 32px; }
+.row { display: flex; align-items: center; }
+.gap-sm { gap: 12px; }
+.gap-md { gap: 16px; }
+.gap-lg { gap: 32px; }
+
+/* Grid */
+.grid { display: grid; gap: 24px; }
+.grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+.grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 960px) { .grid.cols-2, .grid.cols-3 { grid-template-columns: 1fr; } }
+
+/* Cards & buttons built from tokens (used by the new shell) */
+.card {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  padding: clamp(16px, 3vw, 28px);
+  box-shadow: var(--elev-1);
+}
+.button {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 8px; padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid color-mix(in oklab, var(--clr-primary) 22%, var(--clr-border));
+  background: var(--clr-primary);
+  color: #fff; font-weight: 600;
+  cursor: pointer;
+  transition: transform .04s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
+  box-shadow: 0 1px 0 rgba(0,0,0,.04), 0 8px 20px rgba(79,70,229,.15);
+}
+.button:hover { transform: translateY(-1px); box-shadow: 0 1px 0 rgba(0,0,0,.04), 0 14px 30px rgba(79,70,229,.22); background: var(--clr-primary-700); }
+.button.ghost {
+  background: transparent; color: var(--clr-primary);
+  border-color: color-mix(in oklab, var(--clr-primary) 40%, var(--clr-border));
+  box-shadow: none;
+}
+.button.small { padding: 10px 12px; }
+
+/* App shell bits */
+.navbar { display: flex; align-items: center; justify-content: space-between; padding: 28px 0; }
+.brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; color: var(--clr-text); }
+.footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 32px 0; border-top: 1px solid var(--clr-border); color: var(--clr-muted);
 }
 
-/* ======== stream css overrides ======== */
-.str-video__call-stats {
-  max-width: 500px;
-  position: relative;
-}
-
-.str-video__speaker-layout__wrapper {
-  max-height: 700px;
-}
-
-.str-video__participant-details {
-  color: white;
-}
-
-.str-video__menu-container {
-  color: white;
-}
-
-.str-video__notification {
-  color: white;
-}
-
+/* ---- Stream (was dark; now light) ---- */
+/* Your previous overrides targeted dark backgrounds and white text. Switch to neutral text and light surfaces. */ /* :contentReference[oaicite:2]{index=2} */
+.str-video__call-stats { max-width: 500px; position: relative; }
+.str-video__speaker-layout__wrapper { max-height: 700px; }
+.str-video__participant-details,
+.str-video__menu-container,
+.str-video__notification { color: var(--clr-text); }
 .str-video__participant-list {
-  background-color: #1c1f2e;
-  padding: 10px;
-  border-radius: 10px;
-  color: white;
-  height: 100%;
+  background-color: var(--clr-subtle);
+  padding: 10px; border-radius: 10px; color: var(--clr-text); height: 100%;
 }
+.str-video__call-controls__button { height: 40px; }
 
-.str-video__call-controls__button {
-  height: 40px;
-}
-
+/* Glass panels (light) */
 .glassmorphism {
-  background: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid var(--clr-border);
 }
-
 .glassmorphism2 {
-  background: rgba(18, 17, 17, 0.25);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(246,247,251,0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--clr-border);
 }
 
-/* ==== clerk class override ===== */
+/* ---- Clerk overrides (light) ---- */
+/* Your previous CSS inverted the GitHub provider icon and forced white text. Remove inversion and align to light theme. */ /* :contentReference[oaicite:3]{index=3} */
+.cl-providerIcon__github { filter: none; }
+.cl-logoBox { height: 40px; }
+.cl-dividerLine { background: var(--clr-border); height: 2px; }
+.cl-socialButtonsIconButton { border: 2px solid var(--clr-border); }
+.cl-userButtonPopoverActionButtonIcon,
+.cl-internal-wkkub3,
+.cl-userButtonPopoverActionButton { color: var(--clr-text); }
 
-.cl-providerIcon__github {
-  filter: invert(1);
-}
-
-.cl-userButtonPopoverActionButtonIcon {
-  color: white;
-}
-
-.cl-logoBox {
-  height: 40px;
-}
-
-.cl-dividerLine {
-  background: #252a41;
-  height: 2px;
-}
-
-.cl-socialButtonsIconButton {
-  border: 3px solid #565761;
-}
-
-.cl-internal-wkkub3 {
-  color: white;
-}
-
-.cl-userButtonPopoverActionButton {
-  color: white;
-}
-
-/* =============================== */
-
+/* Tailwind utilities you already used */
 @layer utilities {
-  .flex-center {
-    @apply flex justify-center items-center;
-  }
-
-  .flex-between {
-    @apply flex justify-between items-center;
-  }
+  .flex-center { @apply flex justify-center items-center; }
+  .flex-between { @apply flex justify-between items-center; }
 }
 
-/* animation */
-
+/* Tiny animation util (unchanged API, refined easing) */
 .show-block {
-  width: 100%;
-  max-width: 350px;
-  display: block;
-  animation: show 0.7s forwards linear;
+  width: 100%; max-width: 350px; display: block;
+  animation: show 0.6s forwards ease;
+}
+@keyframes show {
+  0% { width: 0%; }
+  100% { width: 100%; }
 }
 
-@keyframes show {
-  0% {
-    animation-timing-function: ease-in;
-    width: 0%;
-  }
+/* Motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
 
-  100% {
-    animation-timing-function: ease-in;
-    width: 100%;
-  }
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  color: var(--clr-text);
+  letter-spacing: -0.02em;
+}
+p {
+  line-height: 1.6;
+  color: var(--clr-muted);
+}
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }

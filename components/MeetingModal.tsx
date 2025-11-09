@@ -13,9 +13,7 @@ interface MeetingModalProps {
   children?: ReactNode;
   handleClick?: () => void;
   buttonText?: string;
-  instantMeeting?: boolean;
   image?: string;
-  buttonClassName?: string;
   buttonIcon?: string;
 }
 
@@ -32,32 +30,46 @@ const MeetingModal = ({
 }: MeetingModalProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="flex w-full max-w-[520px]  flex-col gap-6 border-none bg-dark-1 px-6 py-9 text-white">
-        <div className="flex flex-col gap-6">
+      <DialogContent
+        className={cn(
+          "flex w-full max-w-[520px] flex-col gap-6 rounded-[var(--radius-lg)] border border-[var(--clr-border)]",
+          "bg-[var(--clr-surface)] px-8 py-10 text-[var(--clr-text)] shadow-[var(--elev-3)] backdrop-blur-md"
+        )}
+      >
+        <div className="flex flex-col items-center gap-6">
           {image && (
             <div className="flex justify-center">
-              <Image src={image} alt="checked" width={72} height={72} />
+              <Image src={image} alt="status" width={72} height={72} />
             </div>
           )}
-          <h1 className={cn("text-3xl font-bold leading-[42px]", className)}>
+
+          <h1
+            className={cn(
+              "text-2xl font-bold leading-[34px] text-center text-[var(--clr-text)]",
+              className
+            )}
+          >
             {title}
           </h1>
+
           {children}
+
           <Button
-            className={
-              "bg-blue-1 focus-visible:ring-0 focus-visible:ring-offset-0"
-            }
             onClick={handleClick}
+            className={cn(
+              "button w-full justify-center text-base font-semibold",
+              "hover:shadow-[var(--elev-1)] focus-visible:ring-0 focus-visible:ring-offset-0"
+            )}
           >
             {buttonIcon && (
               <Image
                 src={buttonIcon}
                 alt="button icon"
-                width={13}
-                height={13}
+                width={16}
+                height={16}
               />
-            )}{" "}
-            &nbsp;
+            )}
+            {buttonIcon && <span className="ml-2" />}
             {buttonText || "Schedule Meeting"}
           </Button>
         </div>

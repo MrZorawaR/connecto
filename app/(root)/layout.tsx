@@ -1,20 +1,19 @@
 import StreamVideoProvider from "@/providers/StreamClientProvider";
-import { Metadata } from "next";
-import React, { ReactNode } from "react";
+import type { Metadata } from "next";
+import { ReactNode } from "react";
 
 export const metadata: Metadata = {
   title: "Connecto",
   description: "Video Calling App",
-  icons: {
-    icon: "/icons/logo.svg",
-  },
-};
-const RootLayout = ({ children }: { children: ReactNode }) => {
-  return (
-    <main>
-      <StreamVideoProvider>{children}</StreamVideoProvider>
-    </main>
-  );
+  icons: { icon: "/icons/logo.svg" },
 };
 
-export default RootLayout;
+export default function RootLayout({ children }: { children: ReactNode }) {
+  return (
+    <StreamVideoProvider>
+      <main className="min-h-screen bg-neutral-50 text-neutral-900 antialiased">
+        {children}
+      </main>
+    </StreamVideoProvider>
+  );
+}

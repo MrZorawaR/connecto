@@ -4,7 +4,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "@/components/ui/toaster";
 import "@stream-io/video-react-sdk/dist/css/styles.css";
-import 'react-datepicker/dist/react-datepicker.css'
+import "react-datepicker/dist/react-datepicker.css";
 
 const pk =
   process.env.CLERK_PUBLISHABLE_KEY ||
@@ -13,16 +13,18 @@ const pk =
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
   title: "Connecto",
-  description: "Video Calling App",
+  description: "Seamless video meetings, redefined.",
   icons: {
     icon: "/icons/logo.svg",
   },
@@ -30,15 +32,15 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   if (!pk) {
-    // Fail fast in dev rather than at build on CI
     console.error("Missing CLERK_PUBLISHABLE_KEY");
   }
+
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <ClerkProvider
         publishableKey={pk!}
         signInUrl="/sign-in"
@@ -49,16 +51,17 @@ export default function RootLayout({
             socialButtonsVariant: "iconButton",
           },
           variables: {
-            colorText: "#fff",
-            colorPrimary: "#0e78f9",
-            colorBackground: "#1c1f2e",
-            colorInputBackground: "#252a41",
-            colorInputText: "#fff",
+            colorText: "#1a1a1a",
+            colorPrimary: "#2563eb",
+            colorBackground: "#ffffff",
+            colorInputBackground: "#f5f5f5",
+            colorInputText: "#1a1a1a",
+            borderRadius: "0.5rem",
           },
         }}
       >
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased bg-dark-2`}
+          className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-neutral-50 text-neutral-900 selection:bg-blue-100 selection:text-blue-800`}
         >
           {children}
           <Toaster />

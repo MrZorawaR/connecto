@@ -13,23 +13,23 @@ import MeetingRoom from "@/components/MeetingRoom";
 
 const MeetingPage = () => {
   const params = useParams();
-  const id = params?.id as string; // Ensure `id` is a string
+  const id = params?.id as string;
   const { isLoaded, user } = useUser();
   const { call, isCallLoading } = useGetCallById(id);
   const [isSetupComplete, setIsSetupComplete] = useState(false);
 
   if (!isLoaded || isCallLoading)
     return (
-      <div className="flex h-screen w-full items-center justify-center">
-        <Loader className="w-10 h-10 text-white animate-spin" />
+      <div className="flex h-screen w-full items-center justify-center bg-[var(--clr-bg)]">
+        <Loader className="h-10 w-10 animate-spin text-[var(--clr-primary)]" />
       </div>
     );
 
   if (!call)
     return (
-      <p className="text-center text-3xl font-bold text-white">
-        Call Not Found
-      </p>
+      <div className="flex h-screen w-full flex-col items-center justify-center bg-[var(--clr-bg)] text-[var(--clr-text)]">
+        <p className="text-2xl font-semibold">Call Not Found</p>
+      </div>
     );
 
   const isUserAllowed =
@@ -37,10 +37,14 @@ const MeetingPage = () => {
     (user && call.state?.members?.some((m) => m.user?.id === user.id));
 
   if (!isUserAllowed)
-    return <Alert title="You are not allowed to join this meeting" />;
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-[var(--clr-bg)] text-[var(--clr-text)]">
+        <Alert title="You are not allowed to join this meeting" />
+      </div>
+    );
 
   return (
-    <main className="h-screen w-full">
+    <main className="h-screen w-full bg-[var(--clr-bg)] text-[var(--clr-text)]">
       <StreamCall call={call}>
         <StreamTheme>
           {!isSetupComplete ? (

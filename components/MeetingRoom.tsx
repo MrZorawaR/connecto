@@ -13,11 +13,9 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
 import React, { useState } from "react";
 import { LayoutList, Users } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -49,49 +47,57 @@ const MeetingRoom = () => {
   };
 
   return (
-    <section className="relative h-screen w-full overflow-hidden pt-4 text-white">
-      <div className="relative flex size-full items-center justify-center">
-        <div className="flex size-full max-w-[1000px] items-center">
+    <section className="relative h-screen w-full overflow-hidden bg-[var(--clr-bg)] text-[var(--clr-text)]">
+      {/* Main video layout */}
+      <div className="relative flex size-full items-center justify-center pt-4">
+        <div className="flex size-full max-w-[1100px] items-center justify-center">
           <CallLayout />
         </div>
+
         <div
-          className={cn("h-[calc(100vh-86px)] hidden ml-2", {
-            "show-block": showParticipants,
-          })}
+          className={cn(
+            "h-[calc(100vh-90px)] hidden ml-2 transition-all",
+            showParticipants && "show-block"
+          )}
         >
           <CallParticipantsList onClose={() => setShowParticipants(false)} />
         </div>
       </div>
 
-      <div className="fixed bottom-0 flex w-full items-center justify-center gap-5 flex-wrap">
+      {/* Bottom control bar */}
+      <div className="fixed bottom-0 flex w-full flex-wrap items-center justify-center gap-5 border-t border-[var(--clr-border)] bg-[var(--clr-surface)]/95 px-4 py-3 backdrop-blur-md">
         <CallControls onLeave={() => router.push("/")} />
+
+        {/* Layout selector */}
         <DropdownMenu>
-          <div className="flex items-center">
-            <DropdownMenuTrigger className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
-              <LayoutList size={20} className="text-white" />
-            </DropdownMenuTrigger>
-          </div>
-          <DropdownMenuContent className="border-dark-1 bg-dark-1 text-white rounded-2xl">
-            {["Grid", "Speaker-Left", "Speaker-Right"].map((item, index) => (
-              <div key={index}>
+          <DropdownMenuTrigger className="rounded-md bg-[var(--clr-subtle)] px-3 py-2 text-[var(--clr-text)] shadow-sm transition hover:bg-[var(--clr-border)]/40">
+            <LayoutList size={18} />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="border border-[var(--clr-border)] bg-[var(--clr-surface)] text-[var(--clr-text)] shadow-[var(--elev-2)] rounded-[var(--radius-md)]">
+            {["Grid", "Speaker-Left", "Speaker-Right"].map((item) => (
+              <div key={item}>
                 <DropdownMenuItem
-                  className="cursor-pointer"
+                  className="cursor-pointer hover:bg-[var(--clr-subtle)]"
                   onClick={() =>
-                    setLayout(item.toLocaleLowerCase() as CallLayoutType)
+                    setLayout(item.toLowerCase() as CallLayoutType)
                   }
                 >
                   {item}
                 </DropdownMenuItem>
-                <DropdownMenuSeparator className="border-dark-1" />
+                <DropdownMenuSeparator className="border-[var(--clr-border)]" />
               </div>
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
+
         <CallStatsButton />
-        <button onClick={() => setShowParticipants((prev) => !prev)}>
-          <div className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
-            <Users size={20} className="text-white" />
-          </div>
+
+        {/* Participants toggle */}
+        <button
+          onClick={() => setShowParticipants((prev) => !prev)}
+          className="rounded-md bg-[var(--clr-subtle)] px-3 py-2 transition hover:bg-[var(--clr-border)]/40"
+        >
+          <Users size={18} />
         </button>
         {!isPersonalRoom && <EndCallButton />}
       </div>

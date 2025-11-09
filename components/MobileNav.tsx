@@ -1,9 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
 import {
   Sheet,
   SheetClose,
@@ -11,9 +9,10 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import { sidebarLinks } from "@/constants";
+import { navLinks } from "@/constants";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
+import { Menu } from "lucide-react";
 
 const MobileNav = () => {
   const pathname = usePathname();
@@ -25,61 +24,46 @@ const MobileNav = () => {
     <section className="w-full max-w-[264px]">
       <Sheet>
         <SheetTrigger asChild>
-          <Image
-            src="/icons/hamburger.svg"
-            width={36}
-            height={36}
-            alt="hamburger icon"
-            className="cursor-pointer sm:hidden"
-          />
+          <Menu className="cursor-pointer sm:hidden text-[var(--clr-text)]" />
         </SheetTrigger>
+
         <SheetContent
           side="left"
-          className="border-none bg-dark-1"
+          className="border-none bg-[var(--clr-bg)] text-[var(--clr-text)]"
           aria-describedby={undefined}
         >
           <VisuallyHidden>
             <h2>Navigation Menu</h2>
           </VisuallyHidden>
-          <Link href="/" className="flex items-center gap-1">
-            <Image
-              src="/icons/logo.svg"
-              width={32}
-              height={32}
-              alt="Connecto logo"
-            />
-            <p className="text-[26px] font-extrabold text-white">Connecto</p>
-          </Link>
-          <div className="flex h-[calc(100vh-72px)] flex-col justify-between overflow-y-auto">
-            <SheetClose asChild>
-              <section className=" flex h-full flex-col gap-6 pt-16 text-white">
-                {sidebarLinks.map((item) => {
-                  const isActive = pathname === item.route;
 
+          <Link href="/" className="mb-8 inline-flex items-center gap-2 text-xl font-bold">
+            Connecto
+          </Link>
+
+          <div className="flex h-[calc(100vh-90px)] flex-col justify-between overflow-y-auto">
+            <SheetClose asChild>
+              <nav className="flex h-full flex-col gap-1 pt-2">
+                {navLinks.map(({ route, label, icon: Icon }) => {
+                  const active =
+                    pathname === route || pathname.startsWith(`${route}/`);
                   return (
-                    <SheetClose asChild key={item.route}>
+                    <SheetClose asChild key={route}>
                       <Link
-                        href={item.route}
-                        key={item.label}
+                        href={route}
                         className={cn(
-                          "flex gap-4 items-center p-4 rounded-lg w-full max-w-60",
-                          {
-                            "bg-blue-1": isActive,
-                          }
+                          "flex items-center gap-3 rounded-lg px-4 py-3 text-[15px] transition-colors",
+                          active
+                            ? "bg-[var(--clr-subtle)] text-[var(--clr-text)]"
+                            : "text-[var(--clr-muted)] hover:bg-[var(--clr-subtle)]"
                         )}
                       >
-                        <Image
-                          src={item.imgUrl}
-                          alt={item.label}
-                          width={20}
-                          height={20}
-                        />
-                        <p className="font-semibold">{item.label}</p>
+                        <Icon size={18} />
+                        <span>{label}</span>
                       </Link>
                     </SheetClose>
                   );
                 })}
-              </section>
+              </nav>
             </SheetClose>
           </div>
         </SheetContent>
