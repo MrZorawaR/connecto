@@ -1,9 +1,10 @@
 "use client";
+
 import { ReactNode } from "react";
 import { Dialog, DialogContent } from "./ui/dialog";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
-import Image from "next/image";
+import { type LucideIcon } from "lucide-react";
 
 interface MeetingModalProps {
   isOpen: boolean;
@@ -13,8 +14,8 @@ interface MeetingModalProps {
   children?: ReactNode;
   handleClick?: () => void;
   buttonText?: string;
-  image?: string;
-  buttonIcon?: string;
+  image?: LucideIcon;       // ✅ Updated
+  buttonIcon?: LucideIcon;  // ✅ Updated
 }
 
 const MeetingModal = ({
@@ -25,8 +26,8 @@ const MeetingModal = ({
   children,
   handleClick,
   buttonText,
-  image,
-  buttonIcon,
+  image: ImageIcon,
+  buttonIcon: ButtonIcon,
 }: MeetingModalProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -37,10 +38,10 @@ const MeetingModal = ({
         )}
       >
         <div className="flex flex-col items-center gap-6">
-          {image && (
-            <div className="flex justify-center">
-              <Image src={image} alt="status" width={72} height={72} />
-            </div>
+
+          {/* ✅ Lucide Icon for Modal Header */}
+          {ImageIcon && (
+            <ImageIcon size={72} strokeWidth={1.8} className="text-[var(--clr-text)]" />
           )}
 
           <h1
@@ -54,6 +55,7 @@ const MeetingModal = ({
 
           {children}
 
+          {/* ✅ Button with Lucide Icon */}
           <Button
             onClick={handleClick}
             className={cn(
@@ -61,15 +63,9 @@ const MeetingModal = ({
               "hover:shadow-[var(--elev-1)] focus-visible:ring-0 focus-visible:ring-offset-0"
             )}
           >
-            {buttonIcon && (
-              <Image
-                src={buttonIcon}
-                alt="button icon"
-                width={16}
-                height={16}
-              />
+            {ButtonIcon && (
+              <ButtonIcon size={18} strokeWidth={1.8} className="mr-2" />
             )}
-            {buttonIcon && <span className="ml-2" />}
             {buttonText || "Schedule Meeting"}
           </Button>
         </div>

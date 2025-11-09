@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "./ui/textarea";
 import ReactDatePicker from "react-datepicker";
 import { Input } from "./ui/input";
-import { Calendar, LogIn, PlaySquare, Plus, PlusCircle } from "lucide-react";
+import { Calendar, CheckCircle, Copy, LogIn, PlaySquare, Plus, PlusCircle } from "lucide-react";
 
 const MeetingTypeList = () => {
   const router = useRouter();
@@ -144,8 +144,8 @@ const MeetingTypeList = () => {
             navigator.clipboard.writeText(meetingLink);
             toast({ title: "Link Copied" });
           }}
-          image="/icons/checked.svg"
-          buttonIcon="/icons/copy.svg"
+          image={CheckCircle}        // ✅ Lucide icon
+          buttonIcon={Copy}          // ✅ Lucide icon
           buttonText="Copy Meeting Link"
         />
       )}

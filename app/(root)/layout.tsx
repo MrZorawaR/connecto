@@ -5,7 +5,7 @@ import { ReactNode } from "react";
 export const metadata: Metadata = {
   title: "Connecto",
   description: "Video Calling App",
-  icons: { icon: "/icons/logo.svg" },
+  icons: { icon: "/logo.png" },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

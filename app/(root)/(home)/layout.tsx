@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: "Connecto",
   description: "Video Calling App",
   icons: {
-    icon: "/icons/logo.svg",
+    icon: "/logo.png",
   },
 };
 const HomeLayout = ({ children }: { children: ReactNode }) => {

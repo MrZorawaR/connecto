@@ -17,7 +17,7 @@ const Navbar = () => {
         {/* Brand */}
         <Link href="/" className="inline-flex items-center gap-2">
           <Image
-            src="/icons/logo.svg"
+            src="/logo.png"
             alt="Connecto Logo"
             width={32}
             height={32}

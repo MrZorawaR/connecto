@@ -1,28 +1,28 @@
 "use client";
 
-import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
-import { avatarImages } from "@/constants";
-import { useToast } from "./ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
+import { Copy } from "lucide-react";
+import { type LucideIcon } from "lucide-react";
 
 interface MeetingCardProps {
   title: string;
   date: string;
-  icon: string;
+  icon: LucideIcon;           // ✅ Lucide component
   isPreviousMeeting?: boolean;
-  buttonIcon1?: string;
+  buttonIcon1?: LucideIcon;   // ✅ Changed from string → component
   buttonText?: string;
   handleClick: () => void;
   link: string;
 }
 
 const MeetingCard = ({
-  icon,
+  icon: Icon,
   title,
   date,
   isPreviousMeeting,
-  buttonIcon1,
+  buttonIcon1: ButtonIcon1,
   handleClick,
   link,
   buttonText,
@@ -31,67 +31,45 @@ const MeetingCard = ({
 
   return (
     <section className="card xl:max-w-[568px] min-h-[258px] w-full flex flex-col justify-between rounded-[var(--radius-md)]">
-      <article className="flex flex-col gap-5">
-        <Image src={icon} alt="meeting type" width={28} height={28} />
-        <div className="flex justify-between">
-          <div className="flex flex-col gap-2">
-            <h2 className="text-2xl font-bold text-[var(--clr-text)]">{title}</h2>
-            <p className="text-sm text-[var(--clr-muted)]">{date}</p>
-          </div>
+      
+      <article className="flex flex-col gap-4">
+        <Icon size={28} strokeWidth={1.8} className="text-[var(--clr-text)]" />
+
+        <div className="flex flex-col gap-1">
+          <h2 className="text-2xl font-bold text-[var(--clr-text)]">{title}</h2>
+          <p className="text-sm text-[var(--clr-muted)]">{date}</p>
         </div>
       </article>
 
-      <article className={cn("relative flex items-center justify-between gap-4")}>
-        {/* Attendee avatars (decorative) */}
-        <div className="relative hidden w-full max-sm:hidden md:block">
-          {avatarImages.map((img, index) => (
-            <Image
-              key={index}
-              src={img}
-              alt="attendee"
-              width={40}
-              height={40}
-              className={cn("rounded-full ring-2 ring-[var(--clr-bg)]", {
-                absolute: index > 0,
-              })}
-              style={{ top: 0, left: index * 28 }}
-            />
-          ))}
-          <div className="flex-center absolute left-[136px] size-10 rounded-full border-[5px] border-[var(--clr-bg)] bg-[var(--clr-subtle)] text-[var(--clr-text)]">
-            +5
-          </div>
-        </div>
-
+      <article className={cn("flex items-center justify-end gap-2")}>
         {!isPreviousMeeting && (
-          <div className="ml-auto flex gap-2">
+          <>
+            {/* Start / Play Button */}
             <Button
               variant="default"
-              className="px-5"
+              className="px-5 text-[var(--clr-text)] bg-[var(--clr-subtle)] hover:bg-[var(--clr-border)]/50"
               onClick={handleClick}
             >
-              {buttonIcon1 && (
-                <>
-                  <Image src={buttonIcon1} alt="action" width={18} height={18} />
-                  <span className="ml-2" />
-                </>
-              )}
+              {ButtonIcon1 && <ButtonIcon1 size={18} strokeWidth={1.8} className="mr-2" />}
               {buttonText ?? "Start"}
             </Button>
 
+            {/* Copy Link Button */}
             <Button
               variant="outline"
-              className="px-5"
+              className="px-5 text-[var(--clr-text)] border-[var(--clr-border)] hover:bg-[var(--clr-subtle)]"
               onClick={() => {
                 navigator.clipboard.writeText(link);
                 toast({ title: "Link Copied" });
               }}
             >
-              <Image src="/icons/copy.svg" alt="copy" width={18} height={18} />
-              <span className="ml-2">Copy Link</span>
+              <Copy size={18} strokeWidth={1.8} className="mr-2" />
+              Copy Link
             </Button>
-          </div>
+          </>
         )}
       </article>
+
     </section>
   );
 };

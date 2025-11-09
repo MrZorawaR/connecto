@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   title: "Connecto",
   description: "Seamless video meetings, redefined.",
   icons: {
-    icon: "/icons/logo.svg",
+    icon: "/logo.png",
   },
 };
 
@@ -47,7 +47,7 @@ export default function RootLayout({
         signUpUrl="/sign-up"
         appearance={{
           layout: {
-            logoImageUrl: "/icons/yoom-logo.svg",
+            logoImageUrl: "/logo.png",
             socialButtonsVariant: "iconButton",
           },
           variables: {

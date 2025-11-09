@@ -48,7 +48,6 @@ const PersonalRoom = () => {
     }
     router.push(`/meeting/${meetingId}?personal=true`);
   };
-  console.log("bkl",user)
 
   return (
     <section className="flex size-full flex-col gap-10 text-white">

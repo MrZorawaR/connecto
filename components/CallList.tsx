@@ -8,6 +8,9 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 
+// ✅ Lucide Icons
+import { History, CalendarClock, Video, Play } from "lucide-react";
+
 const CallList = ({ type }: { type: "ended" | "upcoming" | "recordings" }) => {
   const router = useRouter();
   const { endedCalls, upcomingCalls, callRecordings, isLoading } = useGetCalls();
@@ -34,7 +37,6 @@ const CallList = ({ type }: { type: "ended" | "upcoming" | "recordings" }) => {
       ? "No Upcoming Calls"
       : "No Recordings";
 
-  // type guard
   const isRecording = (m: Call | CallRecording): m is CallRecording =>
     (m as CallRecording).url !== undefined;
 
@@ -71,12 +73,13 @@ const CallList = ({ type }: { type: "ended" | "upcoming" | "recordings" }) => {
             (meeting as Call).id ??
             (isRecording(meeting) ? meeting.url : crypto.randomUUID());
 
+          // ✅ Replace old SVG icons with Lucide Icons
           const icon =
             type === "ended"
-              ? "/icons/previous.svg"
+              ? History
               : type === "upcoming"
-              ? "/icons/upcoming.svg"
-              : "/icons/recordings.svg";
+              ? CalendarClock
+              : Video;
 
           const title =
             (!isRecording(meeting) &&
@@ -90,7 +93,6 @@ const CallList = ({ type }: { type: "ended" | "upcoming" | "recordings" }) => {
           const dateStr = (() => {
             if (!isRecording(meeting)) {
               const d = meeting.state?.startsAt;
-              // `startsAt` can be Date or undefined; format defensively
               return d instanceof Date
                 ? d.toLocaleString()
                 : d
@@ -98,7 +100,6 @@ const CallList = ({ type }: { type: "ended" | "upcoming" | "recordings" }) => {
                 : "";
             }
             const d = meeting.start_time;
-            // `start_time` may be ISO string; format if Date-parsable
             const parsed = d ? new Date(d) : undefined;
             return parsed && !isNaN(parsed.getTime())
               ? parsed.toLocaleString()
@@ -109,13 +110,15 @@ const CallList = ({ type }: { type: "ended" | "upcoming" | "recordings" }) => {
             ? meeting.url
             : `${process.env.NEXT_PUBLIC_BASE_URL}/meeting/${meeting.id}`;
 
-          const buttonIcon1 = type === "recordings" ? "/icons/play.svg" : undefined;
+          // ✅ Play icon only for recordings
+          const buttonIcon1 = type === "recordings" ? Play : undefined;
           const buttonText = type === "recordings" ? "Play" : "Start";
 
           const handleClick =
             type === "recordings"
               ? () => router.push(`${(meeting as CallRecording).url}`)
               : () => router.push(`/meeting/${(meeting as Call).id}`);
+
           return (
             <MeetingCard
               key={key}
