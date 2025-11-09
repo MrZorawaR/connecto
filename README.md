@@ -190,5 +190,3 @@ If you like this project:
 ```
 
 It motivates further development 😊
-
-```
