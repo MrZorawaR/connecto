@@ -13,7 +13,7 @@ import { navLinks } from "@/src/constants/constants";
 import { cn } from "@/src/lib/utils";
 import { useEffect, useState } from "react";
 import { Menu, Video } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/src/components/ui/button";
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
 const MobileNav = () => {

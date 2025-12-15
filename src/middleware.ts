@@ -10,6 +10,7 @@ const isProtectedRoute = createRouteMatcher([
   "/meeting(.*)",
 ]);
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const isPublicRoute = createRouteMatcher([
   "/",
   "/sign-in(.*)",

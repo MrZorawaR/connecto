@@ -1,7 +1,7 @@
 "use client";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/src/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { features, testimonials } from "@/src/lib/mockdata";
 import FeatureCard from "@/src/components/new/FeatureCard";

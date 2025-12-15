@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Calendar, Clock, Users, User } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Button } from "@/src/components/ui/button";
+import { Card } from "@/src/components/ui/card";
 // import { Meeting } from "@/lib/mockdata";
 type Meeting = any;
 
