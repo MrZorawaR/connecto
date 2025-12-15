@@ -4,11 +4,13 @@ import { Call, CallRecording } from "@stream-io/video-react-sdk";
 import Loader from "./Loader";
 import { useGetCalls } from "@/src/hooks/useGetCalls";
 import MeetingCard from "./MeetingCard";
-import { useEffect, useState } from "react";
+import RecordingCard from "@/src/components/new/RecordingCard"; // <- adjust path if needed
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/src/hooks/use-toast";
+import { motion, AnimatePresence } from "framer-motion";
 
-import { History, CalendarClock, Video, Play } from "lucide-react";
+import { History, CalendarClock } from "lucide-react";
 
 const CallList = ({ type }: { type: "ended" | "upcoming" | "recordings" }) => {
   const router = useRouter();
@@ -16,7 +18,17 @@ const CallList = ({ type }: { type: "ended" | "upcoming" | "recordings" }) => {
   const [recordings, setRecordings] = useState<CallRecording[]>([]);
   const { toast } = useToast();
 
-  const getCalls = () => {
+  const isRecording = (m: Call | CallRecording): m is CallRecording =>
+    (m as CallRecording).url !== undefined;
+
+  const noCallsMessage =
+    type === "ended"
+      ? "No previous calls yet"
+      : type === "upcoming"
+      ? "No upcoming meetings"
+      : "No recordings found";
+
+  const calls = useMemo(() => {
     switch (type) {
       case "ended":
         return endedCalls ?? [];
@@ -27,17 +39,7 @@ const CallList = ({ type }: { type: "ended" | "upcoming" | "recordings" }) => {
       default:
         return [];
     }
-  };
-
-  const noCallsMessage =
-    type === "ended"
-      ? "No Previous Calls"
-      : type === "upcoming"
-      ? "No Upcoming Calls"
-      : "No Recordings";
-
-  const isRecording = (m: Call | CallRecording): m is CallRecording =>
-    (m as CallRecording).url !== undefined;
+  }, [type, endedCalls, upcomingCalls, recordings]);
 
   useEffect(() => {
     const fetchRecordings = async () => {
@@ -46,7 +48,6 @@ const CallList = ({ type }: { type: "ended" | "upcoming" | "recordings" }) => {
           (await Promise.all(
             callRecordings?.map((meeting) => meeting.queryRecordings()) ?? []
           )) || [];
-
         const recs = callData
           .filter((c) => c.recordings.length > 0)
           .flatMap((c) => c.recordings);
@@ -60,80 +61,106 @@ const CallList = ({ type }: { type: "ended" | "upcoming" | "recordings" }) => {
     if (type === "recordings") fetchRecordings();
   }, [type, callRecordings, toast]);
 
-  if (isLoading) return <Loader />;
-
-  const calls = getCalls();
+  if (isLoading) {
+    return (
+      <div className="p-10 flex items-center justify-center">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
-    <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
+    <AnimatePresence mode="wait">
       {calls && calls.length > 0 ? (
-        calls.map((meeting) => {
-          const key =
-            (meeting as Call).id ??
-            (isRecording(meeting) ? meeting.url : crypto.randomUUID());
-
-          const icon =
-            type === "ended"
-              ? History
-              : type === "upcoming"
-              ? CalendarClock
-              : Video;
-
-          const title =
-            (!isRecording(meeting) &&
-              meeting.state?.custom?.description &&
-              String(meeting.state.custom.description)) ||
-            (isRecording(meeting) &&
-              meeting.filename &&
-              meeting.filename.substring(0, 20)) ||
-            "Personal Meeting";
-
-          const dateStr = (() => {
-            if (!isRecording(meeting)) {
-              const d = meeting.state?.startsAt;
-              return d instanceof Date
-                ? d.toLocaleString()
-                : d
-                ? String(d)
-                : "";
-            }
-            const d = meeting.start_time;
-            const parsed = d ? new Date(d) : undefined;
-            return parsed && !isNaN(parsed.getTime())
-              ? parsed.toLocaleString()
-              : d ?? "";
-          })();
-
-          const link = isRecording(meeting)
-            ? meeting.url
-            : `${process.env.NEXT_PUBLIC_BASE_URL}/meeting/${meeting.id}`;
-
-          const buttonIcon1 = type === "recordings" ? Play : undefined;
-          const buttonText = type === "recordings" ? "Play" : "Start";
-
-          const handleClick =
+        <motion.div
+          key={`${type}-grid`}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 10 }}
+          transition={{ duration: 0.35 }}
+          className={
             type === "recordings"
-              ? () => router.push(`${(meeting as CallRecording).url}`)
-              : () => router.push(`/meeting/${(meeting as Call).id}`);
+              ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              : "grid grid-cols-1 gap-5 md:grid-cols-2"
+          }
+        >
+          {calls.map((meeting, index) => {
+            const key =
+              (meeting as Call).id ??
+              (isRecording(meeting) ? meeting.url : crypto.randomUUID());
 
-          return (
-            <MeetingCard
-              key={key}
-              icon={icon}
-              title={title}
-              date={dateStr}
-              isPreviousMeeting={type === "ended"}
-              link={link}
-              buttonIcon1={buttonIcon1}
-              buttonText={buttonText}
-              handleClick={handleClick}
-            />
-          );
-        })
+            // ✅ RECORDINGS: use RecordingCard UI
+            if (type === "recordings" && isRecording(meeting)) {
+              return (
+                <RecordingCard
+                  key={key}
+                  recording={meeting as any}
+                  index={index}
+                />
+              );
+            }
+
+            // ✅ UPCOMING / ENDED: keep MeetingCard
+            const icon = type === "ended" ? History : CalendarClock;
+
+            const title =
+              (meeting as Call).state?.custom?.description
+                ? String((meeting as Call).state.custom.description)
+                : "Personal Meeting";
+
+            const startsAt = (meeting as Call).state?.startsAt;
+            const dateStr =
+              startsAt instanceof Date
+                ? startsAt.toLocaleString()
+                : startsAt
+                ? String(startsAt)
+                : "";
+
+            const link = `${process.env.NEXT_PUBLIC_BASE_URL}/meeting/${(meeting as Call).id}`;
+
+            const handleClick = () => router.push(`/meeting/${(meeting as Call).id}`);
+
+            return (
+              <motion.div
+                key={key}
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, delay: index * 0.04 }}
+              >
+                <MeetingCard
+                  icon={icon}
+                  title={title}
+                  date={dateStr}
+                  isPreviousMeeting={type === "ended"}
+                  link={link}
+                  buttonText="Start"
+                  handleClick={handleClick}
+                />
+              </motion.div>
+            );
+          })}
+        </motion.div>
       ) : (
-        <h1 className="text-2xl font-bold text-[var(--clr-text)]">{noCallsMessage}</h1>
+        <motion.div
+          key={`${type}-empty`}
+          initial={{ opacity: 0, y: 10, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 10, scale: 0.98 }}
+          transition={{ duration: 0.35 }}
+          className="glass rounded-3xl shadow-card p-10 text-center"
+        >
+          <div className="mx-auto mb-4 h-12 w-12 rounded-2xl bg-gradient-primary shadow-soft" />
+          <h2 className="text-xl font-semibold text-foreground">
+            {noCallsMessage}
+          </h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {type === "recordings"
+              ? "Record your meetings to access them here."
+              : "When you schedule a meeting, it will show up here."}
+          </p>
+        </motion.div>
       )}
-    </div>
+    </AnimatePresence>
   );
 };
 

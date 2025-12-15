@@ -9,8 +9,8 @@ export type NavLink = {
 };
 
 export const navLinks: NavLink[] = [
-  { label: "Home",          route: "/",            icon: Home },
-  { label: "Upcoming",      route: "/upcoming",    icon: CalendarDays },
-  { label: "Recordings",    route: "/recordings",  icon: Video },
-  { label: "Personal Room", route: "/personal-room", icon: ContactRound },
+  { label: "Home",          route: "/dashboard",            icon: Home },
+  { label: "Upcoming",      route: "/dashboard/upcoming",    icon: CalendarDays },
+  { label: "Recordings",    route: "/dashboard/recordings",  icon: Video },
+  { label: "Personal Room", route: "/dashboard/personal-room", icon: ContactRound },
 ];

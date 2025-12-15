@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
+
 import React, { useState } from "react";
-import HomeCard from "./HomeCard";
 import { useRouter } from "next/navigation";
 import MeetingModal from "./MeetingModal";
 import { useUser } from "@clerk/nextjs";
@@ -10,21 +10,25 @@ import { useToast } from "@/src/hooks/use-toast";
 import { Textarea } from "./ui/textarea";
 import ReactDatePicker from "react-datepicker";
 import { Input } from "./ui/input";
-import { Calendar, CheckCircle, Copy, LogIn, PlaySquare, Plus, PlusCircle } from "lucide-react";
+import { Calendar, CheckCircle, Copy, Film, Users, Video } from "lucide-react";
+import ActionCard from "./new/ActionCard";
 
 const MeetingTypeList = () => {
   const router = useRouter();
+
   const [meetingState, setMeetingState] = useState<
     "isScheduleMeeting" | "isJoiningMeeting" | "isInstantMeeting" | undefined
   >();
 
   const { user } = useUser();
   const client = useStreamVideoClient();
+
   const [values, setValues] = useState({
     dateTime: new Date(),
     description: "",
     link: "",
   });
+
   const [callDetails, setCallDetails] = useState<Call>();
   const { toast } = useToast();
 
@@ -57,6 +61,7 @@ const MeetingTypeList = () => {
       if (!values.description) {
         router.push(`/meeting/${call.id}`);
       }
+
       toast({ title: "Meeting Created" });
     } catch (error) {
       console.log(error);
@@ -66,40 +71,47 @@ const MeetingTypeList = () => {
 
   const meetingLink = `${process.env.NEXT_PUBLIC_BASE_URL}/meeting/${callDetails?.id}`;
 
+  const actions = [
+    {
+      icon: Video,
+      title: "Start New Meeting",
+      description: "Launch an instant video meeting and invite others to join.",
+      onClick: () => {
+        setValues((v) => ({ ...v, description: "" }));
+        setMeetingState("isInstantMeeting");
+      },
+      gradient: true,
+    },
+    {
+      icon: Calendar,
+      title: "Schedule a Meeting",
+      description: "Plan ahead and set up meetings for any time.",
+      onClick: () => setMeetingState("isScheduleMeeting"),
+    },
+    {
+      icon: Users,
+      title: "Join a Meeting",
+      description: "Enter a meeting link to join an existing session.",
+      onClick: () => setMeetingState("isJoiningMeeting"),
+    },
+    {
+      icon: Film,
+      title: "View Recordings",
+      description: "Access your past meeting recordings anytime.",
+      onClick: () => router.push("/dashboard/recordings"),
+    },
+  ];
+
   return (
-    <section className="grid grid-cols-1 gap-5 text-[var(--clr-text)] md:grid-cols-2 xl:grid-cols-4">
-      <HomeCard
-        icon={PlusCircle}
-        title="New Meeting"
-        description="Start an instant meeting"
-        handleClick={() => setMeetingState("isInstantMeeting")}
-        className="card hover:shadow-[var(--elev-2)]"
-      />
+    <>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {actions.map((action, index) => (
+          <ActionCard key={action.title} {...action} index={index} />
+        ))}
+      </div>
 
-      <HomeCard
-        icon={Calendar}
-        title="Schedule Meeting"
-        description="Plan your meeting"
-        handleClick={() => setMeetingState("isScheduleMeeting")}
-        className="card hover:shadow-[var(--elev-2)]"
-      />
 
-      <HomeCard
-        icon={LogIn}
-        title="Join Meeting"
-        description="Join via invitation link"
-        handleClick={() => setMeetingState("isJoiningMeeting")}
-        className="card hover:shadow-[var(--elev-2)]"
-      />
-
-      <HomeCard
-        icon={PlaySquare}
-        title="View Recordings"
-        description="Check your Recordings"
-        handleClick={() => router.push("/recordings")}
-        className="card hover:shadow-[var(--elev-2)]"
-      />
-
+      {/* Schedule modal */}
       {!callDetails ? (
         <MeetingModal
           isOpen={meetingState === "isScheduleMeeting"}
@@ -108,29 +120,30 @@ const MeetingTypeList = () => {
           handleClick={createMeeting}
         >
           <div className="flex flex-col gap-2.5">
-            <label className="text-base leading-[22px] text-[var(--clr-muted)]">
+            <label className="text-base leading-[22px] text-muted-foreground">
               Add a description
             </label>
             <Textarea
-              className="border border-[var(--clr-border)] bg-[var(--clr-surface)] text-[var(--clr-text)] focus-visible:ring-0 focus-visible:ring-offset-0"
-              onChange={(e) => {
-                setValues({ ...values, description: e.target.value });
-              }}
+              className="border border-border bg-background text-foreground focus-visible:ring-0 focus-visible:ring-offset-0 rounded-sm"
+              onChange={(e) =>
+                setValues((v) => ({ ...v, description: e.target.value }))
+              }
             />
           </div>
+
           <div className="flex w-full flex-col gap-2.5">
-            <label className="text-base leading-[22px] text-[var(--clr-muted)]">
+            <label className="text-base leading-[22px] text-muted-foreground">
               Select Date and Time
             </label>
             <ReactDatePicker
               selected={values.dateTime}
-              onChange={(date) => setValues({ ...values, dateTime: date! })}
+              onChange={(date) => setValues((v) => ({ ...v, dateTime: date! }))}
               showTimeSelect
               timeFormat="HH:mm"
               timeIntervals={15}
               timeCaption="time"
               dateFormat="MMMM d, yyyy h:mm aa"
-              className="w-full rounded-[var(--radius-sm)] border border-[var(--clr-border)] bg-[var(--clr-surface)] p-2 text-[var(--clr-text)] focus:outline-none"
+              className="w-full rounded-lg border border-border bg-background p-2 text-foreground focus:outline-none"
             />
           </div>
         </MeetingModal>
@@ -144,12 +157,13 @@ const MeetingTypeList = () => {
             navigator.clipboard.writeText(meetingLink);
             toast({ title: "Link Copied" });
           }}
-          image={CheckCircle}        
-          buttonIcon={Copy}          
+          image={CheckCircle}
+          buttonIcon={Copy}
           buttonText="Copy Meeting Link"
         />
       )}
 
+      {/* Instant meeting modal */}
       <MeetingModal
         isOpen={meetingState === "isInstantMeeting"}
         onClose={() => setMeetingState(undefined)}
@@ -159,21 +173,22 @@ const MeetingTypeList = () => {
         handleClick={createMeeting}
       />
 
+      {/* Join meeting modal */}
       <MeetingModal
         isOpen={meetingState === "isJoiningMeeting"}
         onClose={() => setMeetingState(undefined)}
-        title="Type the link here"
+        title="Paste meeting link here"
         className="text-center"
         buttonText="Join Meeting"
         handleClick={() => router.push(values.link)}
       >
         <Input
           placeholder="Meeting Link"
-          className="border border-[var(--clr-border)] bg-[var(--clr-surface)] text-[var(--clr-text)] focus-visible:ring-0 focus-visible:ring-offset-0"
-          onChange={(e) => setValues({ ...values, link: e.target.value })}
+          className="border border-border bg-background text-foreground focus-visible:ring-0 focus-visible:ring-offset-0"
+          onChange={(e) => setValues((v) => ({ ...v, link: e.target.value }))}
         />
       </MeetingModal>
-    </section>
+    </>
   );
 };
 
